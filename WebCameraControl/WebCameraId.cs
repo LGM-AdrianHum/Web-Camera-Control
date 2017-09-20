@@ -9,8 +9,8 @@
         /// </summary>
         internal WebCameraId(DirectShowProxy.VideoInputDeviceInfo info)
         {
-            this.Name = info.FriendlyName;
-            this.DevicePath = info.DevicePath;
+            Name = info.FriendlyName;
+            DevicePath = info.DevicePath;
         }
 
         /// <summary>
@@ -18,7 +18,7 @@
         /// </summary>
         public string Name
         {
-            get; private set;
+            get;
         }
 
         /// <summary>
@@ -26,29 +26,30 @@
         /// </summary>
         internal string DevicePath
         {
-            get; private set;
+            get;
         }
 
         public override Boolean Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(WebCameraId)) return false;
-            return this.Equals((WebCameraId)obj);
+            var a = obj as WebCameraId;
+            return a != null && Equals(a);
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <returns>
-        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         public bool Equals(WebCameraId other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.Name, this.Name) && Equals(other.DevicePath, this.DevicePath);
+            return Equals(other.Name, Name) && Equals(other.DevicePath, DevicePath);
         }
 
         /// <summary>
@@ -61,7 +62,7 @@
         {
             unchecked
             {
-                return (this.Name.GetHashCode() * 397) ^ this.DevicePath.GetHashCode();
+                return (Name.GetHashCode() * 397) ^ DevicePath.GetHashCode();
             }
         }
 

@@ -1,9 +1,14 @@
-﻿namespace WebEye.Controls.Wpf
+﻿// ReSharper disable InconsistentNaming
+
+using System.Diagnostics.CodeAnalysis;
+
+namespace WebEye.Controls.Wpf
 {
     using System;
     using System.Runtime.InteropServices;
     using System.Windows.Interop;
 
+    [SuppressMessage("ReSharper", "InheritdocConsiderUsage")]
     internal class VideoWindow : HwndHost
     {
         #region WinAPI Interop
@@ -21,14 +26,13 @@
             WS_VISIBLE = 0x10000000,
         }
 
-        IntPtr _hWnd = IntPtr.Zero;
-
-        internal new IntPtr Handle { get { return this._hWnd; } }
+        internal new IntPtr Handle { get; private set; } = IntPtr.Zero;
 
         /// <summary>
         /// The CreateWindowEx function creates an overlapped, pop-up, or child window with an extended window style; otherwise, this function is identical to the CreateWindow function. 
         /// </summary>
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
         private static extern IntPtr CreateWindowEx(
            UInt32 dwExStyle,
            String lpClassName,
@@ -44,18 +48,19 @@
            IntPtr lpParam);
 
         [StructLayout(LayoutKind.Sequential)]
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
         private struct RECT
         {
-            internal Int32 left, top, right, bottom;
+            internal int left, top, right, bottom;
         }
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern Boolean GetClientRect(IntPtr hWnd, out RECT lpRect);
+        private static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern Boolean DestroyWindow(IntPtr hWnd);
+        private static extern bool DestroyWindow(IntPtr hWnd);
 
         #endregion
 
@@ -73,11 +78,11 @@
             RECT clientArea;
             GetClientRect(hWndParent.Handle, out clientArea);
 
-            this._hWnd = CreateWindowEx(0, "Static", "", WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE,
+            Handle = CreateWindowEx(0, "Static", "", WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE,
                             0, 0, clientArea.right - clientArea.left, clientArea.bottom - clientArea.top,
                             hWndParent.Handle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
-            return new HandleRef(this, this._hWnd);
+            return new HandleRef(this, Handle);
         }
 
         /// <summary>
